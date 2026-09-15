@@ -3,6 +3,9 @@ package com.llsl.viper4android.ui.screens.main
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
@@ -65,6 +69,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
@@ -95,7 +100,9 @@ import com.llsl.viper4android.ui.components.RichText
 import com.llsl.viper4android.ui.components.SliderEdit
 import com.llsl.viper4android.ui.components.UiDimens
 import com.llsl.viper4android.ui.components.resolvePresetName
+import com.llsl.viper4android.ui.theme.neonAccents
 import java.util.Locale
+import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -113,8 +120,9 @@ private val EffectContentPadding = EffectHorizontalPadding
 private val EffectHeaderIconSize = UiDimens.IconMedium
 private val EffectHeaderIconSpacing = UiDimens.Large
 private val EffectHeaderHorizontalPadding = EffectHorizontalPadding
-private val EffectHeaderVerticalPadding = UiDimens.Large
+private val EffectHeaderVerticalPadding = UiDimens.Medium
 private val EffectSwitchPlaceholderHeight = UiDimens.SwitchSlotHeight
+private val SectionIconChipSize = UiDimens.IconLarge + UiDimens.Compact
 
 private fun scaleToDb(scale: Number): Double = 20.0 * log10(scale.toDouble())
 
@@ -148,7 +156,18 @@ fun EffectSection(
                 ),
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                containerColor =
+                    MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.55f),
+            ),
+        border =
+            BorderStroke(
+                width = if (enabled) UiDimens.Hairline else UiDimens.None,
+                color =
+                    if (enabled) {
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
+                    } else {
+                        MaterialTheme.colorScheme.outlineVariant
+                    },
             ),
     ) {
         Column {
@@ -181,12 +200,48 @@ fun EffectSection(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (icon != null) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        modifier = Modifier.size(EffectHeaderIconSize),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    val accent =
+                        neonAccents[
+                            abs(title.hashCode()) % neonAccents.size
+                        ]
+                    val chipShape = RoundedCornerShape(UiDimens.Small)
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(SectionIconChipSize)
+                                .clip(chipShape)
+                                .background(
+                                    if (enabled) {
+                                        accent.copy(alpha = 0.16f)
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.08f)
+                                    },
+                                )
+                                .then(
+                                    if (enabled) {
+                                        Modifier.border(
+                                            width = UiDimens.Hairline,
+                                            color = accent.copy(alpha = 0.42f),
+                                            shape = chipShape,
+                                        )
+                                    } else {
+                                        Modifier
+                                    },
+                                ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            modifier = Modifier.size(EffectHeaderIconSize),
+                            tint =
+                                if (enabled) {
+                                    accent
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
+                        )
+                    }
                     Spacer(modifier = Modifier.width(EffectHeaderIconSpacing))
                 }
                 Text(

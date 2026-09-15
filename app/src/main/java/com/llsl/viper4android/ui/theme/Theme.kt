@@ -69,7 +69,7 @@ private val DarkColorScheme =
 @Composable
 fun ViperTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme =

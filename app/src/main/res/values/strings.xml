@@ -11,6 +11,12 @@
 
     <!-- Master -->
     <string name="master_enable">Master Enable</string>
+    <string name="hero_master_title">Master Control</string>
+    <string name="hero_status_on">Active</string>
+    <string name="hero_status_off">Standby</string>
+    <string name="status_bar_driver">Driver</string>
+    <string name="status_bar_preset">Preset</string>
+    <string name="preset_active_none">No active preset</string>
     <string name="menu_driver_status">Driver Status</string>
     <string name="menu_presets">Presets</string>
     <string name="menu_settings">Settings</string>
@@ -200,6 +206,8 @@
     <string name="preset_rename_title">Rename Preset</string>
     <string name="preset_name_hint">Preset name</string>
     <string name="preset_empty">No saved presets</string>
+    <string name="preset_search_hint">Search presets</string>
+    <string name="preset_search_empty">No matching presets</string>
     <string name="preset_save_current">Save Current</string>
     <string name="preset_clear_all">Clear All</string>
     <string name="preset_clear_all_title">Clear All Presets</string>

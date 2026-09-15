@@ -1,14 +1,18 @@
 package com.llsl.viper4android.ui.screens.preset
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.AlertDialog
@@ -17,6 +21,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +49,7 @@ import com.llsl.viper4android.ui.components.InfoRow
 import com.llsl.viper4android.ui.components.InputDialog
 import com.llsl.viper4android.ui.components.NavRow
 import com.llsl.viper4android.ui.components.RowDivider
+import com.llsl.viper4android.ui.components.UiDimens
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -66,8 +73,14 @@ fun PresetDialog(
     var loadTarget by remember { mutableStateOf<Preset?>(null) }
     var deleteTarget by remember { mutableStateOf<Preset?>(null) }
     var selectedPresetId by remember { mutableLongStateOf(-1L) }
+    var searchQuery by remember { mutableStateOf("") }
 
     val selectedPreset = presets.find { it.id == selectedPresetId }
+    val filteredPresets =
+        remember(presets, searchQuery) {
+            val query = searchQuery.trim()
+            if (query.isEmpty()) presets else presets.filter { it.name.contains(query, ignoreCase = true) }
+        }
 
     if (showSaveInput) {
         InputDialog(
@@ -211,14 +224,21 @@ fun PresetDialog(
                 if (presets.isEmpty()) {
                     DialogEmptyState(text = stringResource(R.string.preset_empty))
                 } else {
-                    DialogListCard {
-                        items(presets, key = { it.id }) { preset ->
-                            PresetRow(
-                                preset = preset,
-                                onSelect = { selectedPresetId = preset.id },
-                            )
-                            if (preset.id != presets.last().id) {
-                                RowDivider()
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        PresetSearchField(searchQuery) { searchQuery = it }
+                        if (filteredPresets.isEmpty()) {
+                            DialogEmptyState(text = stringResource(R.string.preset_search_empty))
+                        } else {
+                            DialogListCard {
+                                items(filteredPresets, key = { it.id }) { preset ->
+                                    PresetRow(
+                                        preset = preset,
+                                        onSelect = { selectedPresetId = preset.id },
+                                    )
+                                    if (preset.id != filteredPresets.last().id) {
+                                        RowDivider()
+                                    }
+                                }
                             }
                         }
                     }
@@ -249,6 +269,36 @@ fun PresetDialog(
             }
         },
         dismissButton = {},
+    )
+}
+
+@Composable
+private fun PresetSearchField(
+    value: String,
+    onChange: (String) -> Unit,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onChange,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(bottom = UiDimens.Medium),
+        placeholder = { Text(stringResource(R.string.preset_search_hint)) },
+        leadingIcon = {
+            Icon(
+                Icons.Default.Search,
+                contentDescription = null,
+                modifier = Modifier.size(UiDimens.IconSmall),
+            )
+        },
+        singleLine = true,
+        textStyle = MaterialTheme.typography.bodySmall,
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+            ),
     )
 }
 

@@ -114,6 +114,7 @@ class MainViewModel
             private const val PROGRESS_NOTIFY_MIN_GAP_MS = 200L
             private const val PROGRESS_DRAIN_DELAY_MS = 250L
             private const val PERSIST_DEBOUNCE_MS = 300L
+            private const val PREF_ACTIVE_PRESET = "active_preset_name"
         }
 
         val uiState: StateFlow<EffectState>
@@ -121,6 +122,11 @@ class MainViewModel
 
         val presetList: StateFlow<List<Preset>> =
             repository.getAllPresets().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+        val activePresetName: StateFlow<String> =
+            repository
+                .getStringPreference(PREF_ACTIVE_PRESET, "")
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
         val deviceSettingsList: StateFlow<List<DeviceSettings>> =
             repository.getAllDeviceSettings().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -1396,6 +1402,7 @@ class MainViewModel
                     repository.savePreset(
                         Preset(name = name, settingsJson = roomJson, createdAt = createdAt),
                     )
+                    repository.setStringPreference(PREF_ACTIVE_PRESET, name)
                     val file = File(getFilesDir("Preset"), "$name.json")
                     FileOutputStream(file).use { fos ->
                         fos.write(fileJson.toByteArray(Charsets.UTF_8))
@@ -1414,6 +1421,7 @@ class MainViewModel
                 val json = JSONObject(preset.settingsJson)
                 uiState.update { deserializeEffectPrefs(json, it) }
                 saveEffectPrefs(repository, uiState.value)
+                repository.setStringPreference(PREF_ACTIVE_PRESET, preset.name)
                 dispatchFullState()
             }
         }
