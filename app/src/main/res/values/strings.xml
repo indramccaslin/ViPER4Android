@@ -352,4 +352,14 @@
     <string name="ds_device_high_end_headphone_v1">High-End Headphone (v1)</string>
     <string name="ds_device_common_headphone_v1">Common Headphone (v1)</string>
     <string name="ds_device_common_earphone_v1">Common Earphone (v1)</string>
+
+    <!-- Restored from 2.1.0 UI -->
+    <string name="hero_master_title">Master Control</string>
+    <string name="hero_status_on">Active</string>
+    <string name="hero_status_off">Standby</string>
+    <string name="status_bar_driver">Driver</string>
+    <string name="status_bar_preset">Preset</string>
+    <string name="preset_active_none">No active preset</string>
+    <string name="preset_search_hint">Search presets</string>
+    <string name="preset_search_empty">No matching presets</string>
 </resources>
