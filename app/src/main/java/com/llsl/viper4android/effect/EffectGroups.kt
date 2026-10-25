@@ -984,10 +984,10 @@ class DynamicSystemEffect : EffectGroupBuilder("dynamicSystem") {
         float(
             ViperParams.PARAM_DYNAMIC_SYSTEM_STRENGTH,
             "strength",
-            1.0f,
+            0.5f,
             { it.dynamicSystem.strength },
             { copy(dynamicSystem = dynamicSystem.copy(strength = it)) },
-            range = 1.0f..8.0f,
+            range = 0.0f..1.0f,
         )
     val xLow =
         int(
@@ -1237,6 +1237,33 @@ class TubeSimulatorEffect : EffectGroupBuilder("tubeSimulator") {
             false,
             { it.tubeSimulator.enable },
             { copy(tubeSimulator = tubeSimulator.copy(enable = it)) },
+        )
+    val model =
+        int(
+            ViperParams.PARAM_TUBE_SIMULATOR_MODEL,
+            "model",
+            0,
+            { it.tubeSimulator.model },
+            { copy(tubeSimulator = tubeSimulator.copy(model = it)) },
+            range = 0..2,
+        )
+    val drive =
+        float(
+            ViperParams.PARAM_TUBE_SIMULATOR_DRIVE,
+            "drive",
+            0.5f,
+            { it.tubeSimulator.drive },
+            { copy(tubeSimulator = tubeSimulator.copy(drive = it)) },
+            range = 0.0f..1.0f,
+        )
+    val mix =
+        float(
+            ViperParams.PARAM_TUBE_SIMULATOR_MIX,
+            "mix",
+            0.3f,
+            { it.tubeSimulator.mix },
+            { copy(tubeSimulator = tubeSimulator.copy(mix = it)) },
+            range = 0.0f..1.0f,
         )
 }
 

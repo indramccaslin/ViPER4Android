@@ -294,7 +294,7 @@ private fun convertOldPresetFloat(
 
         ViperParams.PARAM_SPECTRUM_EXTENSION_EXCITER -> value / 100.0f * 5.6f
 
-        ViperParams.PARAM_DYNAMIC_SYSTEM_STRENGTH -> 1.0f + value / 100.0f * 20.0f
+        ViperParams.PARAM_DYNAMIC_SYSTEM_STRENGTH -> value / 100.0f
 
         ViperParams.PARAM_FIELD_SURROUND_MID_IMAGE -> value / 10.0f + 1.0f
 
@@ -338,7 +338,7 @@ suspend fun loadEffectStateFromPrefs(
                 }
 
                 is FloatPref -> {
-                    pref.set(s, repository.getFloatPreference(pref.prefKey, pref.defaultValue).first())
+                    pref.set(s, pref.clamp(repository.getFloatPreference(pref.prefKey, pref.defaultValue).first()))
                 }
 
                 is BoolPref -> {
